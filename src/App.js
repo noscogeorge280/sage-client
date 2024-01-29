@@ -1,24 +1,42 @@
 import logo from './logo.svg';
 import './App.css';
+import React, { useState } from 'react';
+import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
+import Header from './components/layout/header';
+import Sidebar from './components/layout/sidebar';
+import Homepage from './components/home/homepage';
+import CharacterDetails from './components/home/characterdetails';
+import SearchResults from './components/layout/searchresults';
 
-function App() {
+const App = () => {
+  const [favorites, setFavorites] = useState([]);
+
+  const handleSearch = (searchTerm) => {
+    // You can implement search functionality here
+  };
+
+  const handleAddFavorite = (character) => {
+    setFavorites((prevFavorites) => [...prevFavorites, character]);
+  };
+
+  const handleRemoveFavorite = (characterId) => {
+    setFavorites((prevFavorites) => prevFavorites.filter((fav) => fav.id !== characterId));
+  };
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <Router>
+      <div>
+        <Header onSearch={handleSearch} />
+        <Sidebar favorites={favorites} onRemoveFavorite={handleRemoveFavorite} />
+        <Routes>
+          <Route exact path='/' element={<Homepage onAddFavorite={handleAddFavorite} favorites={favorites} />}  />
+          <Route path="/character/:id"  element={<CharacterDetails  favorites={favorites} onAddFavorite={handleAddFavorite} onRemoveFavorite={handleRemoveFavorite} />}>
+            
+          </Route>
+          <Route path="/search" component={SearchResults} />
+
+        </Routes>
+      </div>
+    </Router>
   );
 }
 
